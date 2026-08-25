@@ -1,0 +1,897 @@
+<title>Dark 2026 for Neovim</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+/* ─────────────────────────────────────────────────────────────────────────
+   Palette taken verbatim from 2026-dark.json. The page is a specimen of the
+   theme it documents, so it commits to the theme's own dark ground rather
+   than following the viewer's light/dark preference: every swatch below is
+   only accurate against #121314.
+   ───────────────────────────────────────────────────────────────────────── */
+:root {
+  --bg:        #121314;   /* editor.background        */
+  --chrome:    #191A1B;   /* sideBar / statusBar      */
+  --float:     #202122;   /* editorWidget.background  */
+  --raised:    #242526;   /* editor.lineHighlight     */
+  --rule:      #2A2B2C;   /* editorWidget.border      */
+  --text:      #BBBEBF;   /* editor.foreground        */
+  --muted:     #858889;   /* editorLineNumber.fg      */
+  --dim:       #5C5F60;
+  --sidebar-fg:#BFBFBF;
+
+  --red:    #FF7B72;   --purple: #D2A8FF;  --sky:    #A5D6FF;
+  --teal:   #4EC9B0;   --pink:   #C586C0;  --orange: #FFA657;
+  --yellow: #DCDCAA;   --green:  #7EE787;  --blue:   #79C0FF;
+  --grey:   #8B949E;   --sand:   #B5CEA8;
+
+  --err: #F14C4C;  --warn: #CCA700;  --ok: #73C991;
+
+  --measure: 68ch;
+  --rail: 15.5rem;
+
+  --step--1: clamp(0.78rem, 0.76rem + 0.10vw, 0.84rem);
+  --step-0:  clamp(0.94rem, 0.91rem + 0.14vw, 1.02rem);
+  --step-1:  clamp(1.12rem, 1.05rem + 0.32vw, 1.30rem);
+  --step-2:  clamp(1.42rem, 1.28rem + 0.62vw, 1.85rem);
+  --step-3:  clamp(1.85rem, 1.58rem + 1.20vw, 2.70rem);
+
+  --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: var(--step-0);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── shell: explorer rail + editor area ─────────────────────────────────── */
+.shell { display: grid; grid-template-columns: var(--rail) minmax(0, 1fr); }
+
+.rail {
+  position: sticky; top: 0; align-self: start;
+  height: 100vh; overflow-y: auto;
+  background: var(--chrome);
+  border-right: 1px solid var(--rule);
+  padding: 1.5rem 0 2rem;
+  display: flex; flex-direction: column; gap: 1.5rem;
+}
+.rail-head { padding: 0 1.25rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.rail-title {
+  font-family: var(--mono); font-size: 0.8rem; font-weight: 600;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--sidebar-fg);
+}
+.rail-sub { font-size: 0.72rem; color: var(--dim); font-family: var(--mono); }
+
+.rail nav { display: flex; flex-direction: column; }
+.rail nav a {
+  display: block; padding: 0.34rem 1.25rem 0.34rem 1.6rem;
+  color: var(--muted); text-decoration: none;
+  font-size: 0.83rem; border-left: 2px solid transparent;
+}
+.rail nav a:hover { color: var(--text); background: #FFFFFF08; }
+.rail nav a:focus-visible { outline: 2px solid var(--blue); outline-offset: -2px; }
+.rail nav .grp {
+  padding: 1rem 1.25rem 0.3rem; font-size: 0.68rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--dim); font-family: var(--mono);
+}
+
+main { min-width: 0; padding: 0 0 5rem; }
+.wrap { padding: 0 clamp(1.25rem, 4vw, 3.5rem); }
+
+/* ── hero ───────────────────────────────────────────────────────────────── */
+.hero { padding: clamp(3rem, 8vh, 5.5rem) 0 2.5rem; border-bottom: 1px solid var(--rule); }
+.eyebrow {
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted); margin: 0 0 1rem;
+}
+h1 {
+  font-size: var(--step-3); font-weight: 600; letter-spacing: -0.022em;
+  line-height: 1.08; margin: 0 0 1rem; text-wrap: balance; color: #EDEFEF;
+}
+.lede { font-size: var(--step-1); color: var(--muted); max-width: var(--measure); margin: 0 0 2rem; text-wrap: pretty; }
+.lede em { color: var(--text); font-style: normal; }
+
+.cmd {
+  display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+  background: var(--float); border: 1px solid var(--rule); border-radius: 4px;
+  padding: 0.7rem 0.95rem; font-family: var(--mono); font-size: 0.86rem;
+  max-width: 46rem;
+}
+.cmd .p { color: var(--teal); user-select: none; }
+.cmd code { color: var(--text); }
+
+/* ── sections ───────────────────────────────────────────────────────────── */
+section { padding-top: 3.25rem; scroll-margin-top: 1rem; }
+h2 {
+  font-size: var(--step-2); font-weight: 600; letter-spacing: -0.015em;
+  margin: 0 0 0.5rem; color: #E4E6E6; text-wrap: balance;
+}
+h3 {
+  font-size: var(--step-1); font-weight: 600; margin: 2.25rem 0 0.6rem;
+  color: #DADCDC; letter-spacing: -0.008em;
+}
+h4 {
+  font-family: var(--mono); font-size: 0.78rem; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  margin: 1.75rem 0 0.7rem;
+}
+p { max-width: var(--measure); margin: 0 0 1rem; text-wrap: pretty; }
+.sub { color: var(--muted); max-width: var(--measure); margin: 0 0 1.5rem; }
+a { color: var(--blue); text-decoration-color: #79C0FF55; text-underline-offset: 2px; }
+a:hover { text-decoration-color: var(--blue); }
+strong { color: #E4E6E6; font-weight: 600; }
+
+code, kbd, .m { font-family: var(--mono); }
+p code, li code, td code, .note code {
+  font-size: 0.88em; background: var(--raised); border: 1px solid var(--rule);
+  border-radius: 3px; padding: 0.06em 0.34em; color: var(--sky);
+}
+
+pre {
+  background: var(--float); border: 1px solid var(--rule); border-radius: 5px;
+  padding: 0.95rem 1.1rem; overflow-x: auto; font-size: 0.84rem;
+  line-height: 1.6; margin: 0 0 1.25rem; max-width: 52rem;
+}
+pre code { font-family: var(--mono); color: var(--text); }
+.c  { color: var(--grey); }  .k { color: var(--red); }
+.s  { color: var(--sky); }   .f { color: var(--purple); }
+.t  { color: var(--teal); }  .n { color: var(--sand); }
+.kw { color: var(--pink); }  .v { color: var(--orange); }
+.b  { color: var(--yellow); } .l { color: var(--blue); }
+
+/* ── keycaps ────────────────────────────────────────────────────────────── */
+kbd {
+  display: inline-block; font-size: 0.76rem; font-weight: 500; line-height: 1.5;
+  padding: 0.1rem 0.42rem; border-radius: 4px; white-space: nowrap;
+  background: #2C2E2F; color: #E2E4E4;
+  border: 1px solid #3A3D3E; border-bottom-width: 2px;
+}
+kbd + kbd { margin-left: 0.18rem; }
+.kbd-sep { color: var(--dim); margin: 0 0.3rem; font-size: 0.78rem; }
+
+/* ── tables ─────────────────────────────────────────────────────────────── */
+.tw { overflow-x: auto; margin: 0 0 1.5rem; border: 1px solid var(--rule); border-radius: 5px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.88rem; min-width: 34rem; }
+thead th {
+  text-align: left; font-family: var(--mono); font-size: 0.68rem;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  font-weight: 500; padding: 0.6rem 0.9rem; background: var(--chrome);
+  border-bottom: 1px solid var(--rule); white-space: nowrap;
+}
+tbody td { padding: 0.52rem 0.9rem; border-bottom: 1px solid #FFFFFF0A; vertical-align: top; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover td { background: #FFFFFF06; }
+td.act { color: var(--text); }
+td.alt { color: var(--muted); font-size: 0.84rem; }
+.tw table col.w-key { width: 15rem; }
+
+/* ── palette swatches ───────────────────────────────────────────────────── */
+.pal { display: grid; grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr)); gap: 0.6rem; margin: 0 0 1.5rem; }
+.sw {
+  background: var(--float); border: 1px solid var(--rule); border-radius: 5px;
+  padding: 0.7rem 0.8rem; display: flex; flex-direction: column; gap: 0.45rem;
+}
+.sw-top { display: flex; align-items: center; gap: 0.55rem; }
+.chip { width: 1.15rem; height: 1.15rem; border-radius: 3px; flex: none; border: 1px solid #FFFFFF1A; }
+.sw-hex { font-family: var(--mono); font-size: 0.78rem; color: var(--text); font-variant-numeric: tabular-nums; }
+.sw-role { font-size: 0.74rem; color: var(--muted); line-height: 1.4; }
+.sw-scope { font-family: var(--mono); font-size: 0.68rem; color: var(--dim); word-break: break-all; }
+
+/* ── the specificity diagram ────────────────────────────────────────────── */
+.resolve {
+  background: var(--float); border: 1px solid var(--rule); border-radius: 6px;
+  padding: 1.15rem; margin: 0 0 1.5rem; max-width: 52rem; overflow-x: auto;
+}
+.resolve-token {
+  font-family: var(--mono); font-size: 0.85rem; color: var(--text);
+  padding-bottom: 0.85rem; margin-bottom: 0.85rem; border-bottom: 1px dashed var(--rule);
+}
+.resolve-token .lbl { color: var(--dim); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; display: block; margin-bottom: 0.35rem; }
+.cand { display: grid; grid-template-columns: 1.6rem minmax(9rem, auto) 1fr auto; gap: 0.7rem; align-items: center; padding: 0.4rem 0; font-family: var(--mono); font-size: 0.8rem; }
+.cand + .cand { border-top: 1px solid #FFFFFF08; }
+.cand .mark { text-align: center; font-size: 0.9rem; }
+.cand .sel { color: var(--text); }
+.cand .why { color: var(--dim); font-size: 0.73rem; font-family: var(--sans); }
+.cand .out { display: flex; align-items: center; gap: 0.4rem; justify-content: flex-end; font-variant-numeric: tabular-nums; }
+.cand.win .sel { color: var(--text); }
+.cand.win { background: #7EE7870D; border-radius: 3px; }
+.cand.lose .sel, .cand.lose .out { opacity: 0.45; }
+.cand.lose .mark { color: var(--dim); }
+.cand.win .mark { color: var(--ok); }
+
+/* ── callouts ───────────────────────────────────────────────────────────── */
+.note {
+  border-left: 2px solid var(--rule); background: #FFFFFF05;
+  padding: 0.85rem 1.1rem; margin: 0 0 1.4rem; max-width: var(--measure);
+  border-radius: 0 4px 4px 0; font-size: 0.92rem; color: var(--muted);
+}
+.note p { margin: 0; max-width: none; }
+.note p + p { margin-top: 0.6rem; }
+.note strong { color: var(--text); }
+.note.warn { border-left-color: var(--warn); }
+.note.info { border-left-color: var(--blue); }
+
+/* ── support matrix ─────────────────────────────────────────────────────── */
+.yes { color: var(--ok); } .no { color: var(--err); }
+.pill {
+  display: inline-block; font-family: var(--mono); font-size: 0.68rem;
+  letter-spacing: 0.06em; text-transform: uppercase; padding: 0.08rem 0.45rem;
+  border-radius: 3px; border: 1px solid;
+}
+.pill.g { color: var(--ok); border-color: #73C99155; background: #73C9911A; }
+.pill.r { color: var(--err); border-color: #F14C4C55; background: #F14C4C1A; }
+
+/* ── status bar ─────────────────────────────────────────────────────────── */
+.statusbar {
+  position: sticky; bottom: 0; margin-top: 3rem;
+  background: var(--chrome); border-top: 1px solid var(--rule);
+  padding: 0.4rem clamp(1.25rem, 4vw, 3.5rem);
+  display: flex; gap: 1.4rem; flex-wrap: wrap; align-items: center;
+  font-family: var(--mono); font-size: 0.72rem; color: var(--muted);
+}
+.statusbar .sb-item { display: flex; align-items: center; gap: 0.35rem; }
+.statusbar .dot { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: var(--ok); }
+.statusbar a { color: var(--muted); }
+.statusbar a:hover { color: var(--text); }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; margin-bottom: 1.5rem; max-width: 52rem; }
+.card { background: var(--float); border: 1px solid var(--rule); border-radius: 5px; padding: 0.95rem 1.05rem; }
+.card h5 { margin: 0 0 0.4rem; font-size: 0.9rem; font-weight: 600; color: #E0E2E2; }
+.card p { font-size: 0.85rem; color: var(--muted); margin: 0; max-width: none; }
+
+hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
+
+@media (max-width: 880px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--rule); }
+  .rail nav { flex-direction: row; flex-wrap: wrap; padding: 0 1rem; gap: 0.15rem; }
+  .rail nav a { border-left: 0; padding: 0.3rem 0.6rem; border-radius: 3px; }
+  .rail nav .grp { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="shell">
+  <aside class="rail">
+    <div class="rail-head">
+      <span class="rail-title">nvim-vscode-2026</span>
+      <span class="rail-sub">Dark 2026 · v1.133.0</span>
+    </div>
+    <nav>
+      <span class="grp">Start</span>
+      <a href="#install">Install</a>
+      <a href="#verify">Verify</a>
+      <span class="grp">Colour</span>
+      <a href="#how">How the port works</a>
+      <a href="#palette">Palette</a>
+      <a href="#terminal">Terminal &amp; tmux</a>
+      <span class="grp">Using it</span>
+      <a href="#keys">Keybindings</a>
+      <a href="#python">Python</a>
+      <a href="#debug">Debugging</a>
+      <span class="grp">Maintenance</span>
+      <a href="#custom">Customising</a>
+      <a href="#regen">Regenerating</a>
+      <a href="#trouble">Troubleshooting</a>
+    </nav>
+  </aside>
+
+  <main>
+    <div class="wrap">
+
+      <header class="hero">
+        <p class="eyebrow">Neovim configuration manual</p>
+        <h1>Dark 2026 for Neovim</h1>
+        <p class="lede">
+          VS&nbsp;Code's Dark&nbsp;2026 theme, ported to Neovim by <em>generating the colourscheme
+          from the theme JSON</em> rather than matching it by eye — with basedpyright, Ruff,
+          a debugger and a file tree wired to the keys you already use.
+        </p>
+        <div class="cmd">
+          <span class="p">$</span>
+          <code>git clone https://github.com/xmandeng/nvim-vscode-2026.git &amp;&amp; cd nvim-vscode-2026 &amp;&amp; ./bootstrap.sh</code>
+        </div>
+      </header>
+
+      <!-- ══════════════════════════════════════════════════════════ INSTALL -->
+      <section id="install">
+        <h2>Install</h2>
+        <p class="sub">
+          <code>bootstrap.sh</code> backs up any existing <code>~/.config/nvim</code>, links this one
+          in, then installs plugins, language servers and treesitter parsers. Nothing is deleted.
+        </p>
+
+        <h4>Prerequisites</h4>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Requirement</th><th>Why</th><th>Check</th></tr></thead>
+            <tbody>
+              <tr><td class="act">Neovim 0.10+</td><td class="alt">0.11+ recommended; uses <code>vim.lsp.config</code></td><td><code>nvim --version</code></td></tr>
+              <tr><td class="act">git</td><td class="alt">plugin manager</td><td><code>git --version</code></td></tr>
+              <tr><td class="act">C compiler + make</td><td class="alt">treesitter parsers, fzf-native</td><td><code>cc --version</code></td></tr>
+              <tr><td class="act">Node.js</td><td class="alt">basedpyright runs on Node</td><td><code>node --version</code></td></tr>
+              <tr><td class="act">Python 3</td><td class="alt">language server and debugger target</td><td><code>python3 --version</code></td></tr>
+              <tr><td class="act">ripgrep</td><td class="alt">search across files</td><td><code>rg --version</code></td></tr>
+              <tr><td class="act">A Nerd Font</td><td class="alt">icons in tree, tabs, gutter</td><td>terminal font setting</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Missing pieces produce warnings rather than a hard failure, so you can install and re-run.</p>
+
+        <h4>Options</h4>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Flag</th><th>Effect</th></tr></thead>
+            <tbody>
+              <tr><td><code>--appname NAME</code></td><td class="alt">install to <code>~/.config/NAME</code>; launch with <code>NVIM_APPNAME=NAME nvim</code></td></tr>
+              <tr><td><code>--copy</code></td><td class="alt">copy instead of symlinking</td></tr>
+              <tr><td><code>--no-deps</code></td><td class="alt">skip plugin, LSP and parser installation</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h4>Trying it without disturbing an existing config</h4>
+<pre><code><span class="c">$</span> ./bootstrap.sh --appname nvim-vsc
+<span class="c">$</span> NVIM_APPNAME=nvim-vsc nvim</code></pre>
+        <p><code>NVIM_APPNAME</code> isolates config, data, state and cache directories, so the two installs share nothing.</p>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════ VERIFY -->
+      <section id="verify">
+        <h2>Verify</h2>
+        <p class="sub">Open a Python file and confirm four things.</p>
+        <div class="grid2">
+          <div class="card"><h5>Language servers</h5><p><code>:LspInfo</code> lists <strong>basedpyright</strong> and <strong>ruff</strong>.</p></div>
+          <div class="card"><h5>File tree</h5><p><kbd>Ctrl</kbd><kbd>B</kbd> opens the Explorer on the left.</p></div>
+          <div class="card"><h5>Debugger</h5><p><kbd>F9</kbd> sets a breakpoint, <kbd>F5</kbd> starts and stops on it.</p></div>
+          <div class="card"><h5>Colours</h5><p><code>:Inspect</code> on a token reports the group actually winning.</p></div>
+        </div>
+        <p>A broader sweep lives in <code>:checkhealth</code>.</p>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════════ HOW -->
+      <section id="how">
+        <h2>How the colour port works</h2>
+        <p class="sub">
+          The goal is that Neovim shows the <em>same hex values</em> VS&nbsp;Code shows. Three things
+          make that harder than copying a palette.
+        </p>
+
+        <h3>1. The theme is an inheritance chain</h3>
+        <p>
+          <code>2026-dark.json</code> is not a full theme. It carries an <code>include</code> that
+          resolves through three ancestors:
+        </p>
+<pre><code>dark_vs.json <span class="c">→</span> dark_plus.json <span class="c">→</span> dark_modern.json <span class="c">→</span> 2026-dark.json</code></pre>
+        <p>
+          Flattening that chain yields <strong>329 UI colours</strong> and <strong>118 token rules</strong>.
+          Parent <code>tokenColors</code> are concatenated ahead of the child's, which matters next.
+        </p>
+
+        <h3>2. Dark 2026 is a hybrid, and naive matching gets it wrong</h3>
+        <p>
+          Dark&nbsp;2026 layers a GitHub-Dark-style palette over the classic Dark+ base. The Dark+
+          colours still show through wherever Dark+ has a <strong>more specific</strong> selector. So in
+          one Python file, from one theme, <code>import</code> is pink and <code>def</code> is red:
+        </p>
+
+        <div class="resolve">
+          <div class="resolve-token">
+            <span class="lbl">Token scope</span>
+            keyword.control.import<span style="color:var(--dim)">.python</span>
+          </div>
+          <div class="cand lose">
+            <span class="mark">×</span>
+            <span class="sel">keyword</span>
+            <span class="why">1 segment — less specific</span>
+            <span class="out"><span class="chip" style="background:#FF7B72"></span><span class="m" style="color:var(--dim)">#FF7B72</span></span>
+          </div>
+          <div class="cand lose">
+            <span class="mark">×</span>
+            <span class="sel">markup.heading entity.name</span>
+            <span class="why">descendant — needs a heading ancestor</span>
+            <span class="out"><span class="chip" style="background:#79C0FF"></span><span class="m" style="color:var(--dim)">#79C0FF</span></span>
+          </div>
+          <div class="cand win">
+            <span class="mark">✓</span>
+            <span class="sel">keyword.control</span>
+            <span class="why">2 segments — most specific direct match</span>
+            <span class="out"><span class="chip" style="background:#C586C0"></span><span class="m" style="color:var(--text)">#C586C0</span></span>
+          </div>
+        </div>
+
+        <p>
+          Resolving "last rule wins" would paint everything with the GitHub palette. The generator
+          implements TextMate's real ranking, <code>(direct, specificity, order)</code>:
+        </p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Rank key</th><th>Rule</th></tr></thead>
+            <tbody>
+              <tr><td class="act">direct</td><td class="alt">A descendant selector such as <code>markup.heading entity.name</code> only applies inside a heading. Bare scopes are resolved with no ancestor stack, so descendant selectors rank below direct ones. Without this, every <code>entity.name.*</code> token is hijacked and decorators come out blue instead of orange.</td></tr>
+              <tr><td class="act">specificity</td><td class="alt">More dot-segments wins, so <code>keyword.control</code> beats <code>keyword</code>.</td></tr>
+              <tr><td class="act">order</td><td class="alt">Later files in the include chain win genuine ties.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>3. Semantic tokens, not just treesitter</h3>
+        <p>
+          VS&nbsp;Code colours Python mainly from Pylance's <em>semantic tokens</em>, not the grammar.
+          Neovim has the same mechanism: a server supporting <code>textDocument/semanticTokens</code>
+          drives the <code>@lsp.type.*</code> groups. The generator encodes VS&nbsp;Code's built-in
+          semantic-token-to-scope defaults — <code>class</code> → <code>entity.name.type.class</code>,
+          <code>parameter</code> → <code>variable.parameter</code> — plus modifier transforms such as
+          <code>*.defaultLibrary</code> → <code>support.*</code>, then resolves each through the same engine.
+        </p>
+        <p>
+          Neovim appends the filetype, producing <code>@lsp.type.class.python</code>, which falls back
+          through the standard <code>@a.b.c</code> → <code>@a.b</code> → <code>@a</code> hierarchy.
+        </p>
+
+        <h3>Alpha</h3>
+        <p>
+          VS&nbsp;Code themes use 8-digit <code>#RRGGBBAA</code> colours —
+          <code>editor.selectionBackground</code> is <code>#276782dd</code>. Terminals have no alpha
+          channel, and handing an 8-digit value to <code>nvim_set_hl</code> raises
+          <em>"Invalid highlight color"</em> and aborts the colourscheme mid-load, leaving
+          <code>Normal</code> unset. Every such colour is composited over its real backdrop at
+          generation time: <code>#276782dd</code> over <code>#121314</code> becomes <code>#245C73</code>.
+        </p>
+        <div class="note info">
+          <p>A validator runs before emission and refuses to write anything that is not
+          <code>#RRGGBB</code>, so that class of bug cannot reach the editor. The loader also sets each
+          group independently, so a bad personal override degrades to one warning instead of an
+          unstyled editor.</p>
+        </div>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════ PALETTE -->
+      <section id="palette">
+        <h2>Palette</h2>
+        <p class="sub">
+          Every value below is read from <code>2026-dark.json</code>. These are the colours this page
+          is painted in.
+        </p>
+
+        <h4>Syntax</h4>
+        <div class="pal">
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#FF7B72"></span><span class="sw-hex">#FF7B72</span></div><span class="sw-role">Keywords, storage</span><span class="sw-scope">keyword · storage.type</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#C586C0"></span><span class="sw-hex">#C586C0</span></div><span class="sw-role">Control flow, imports</span><span class="sw-scope">keyword.control</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#D2A8FF"></span><span class="sw-hex">#D2A8FF</span></div><span class="sw-role">Function names</span><span class="sw-scope">entity.name.function</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#DCDCAA"></span><span class="sw-hex">#DCDCAA</span></div><span class="sw-role">Built-in functions</span><span class="sw-scope">support.function</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#4EC9B0"></span><span class="sw-hex">#4EC9B0</span></div><span class="sw-role">Types, classes</span><span class="sw-scope">entity.name.type</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#A5D6FF"></span><span class="sw-hex">#A5D6FF</span></div><span class="sw-role">Strings</span><span class="sw-scope">string</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#B5CEA8"></span><span class="sw-hex">#B5CEA8</span></div><span class="sw-role">Numbers</span><span class="sw-scope">constant.numeric</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#569CD6"></span><span class="sw-hex">#569CD6</span></div><span class="sw-role">None, True, False</span><span class="sw-scope">constant.language</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#FFA657"></span><span class="sw-hex">#FFA657</span></div><span class="sw-role">Parameters, decorators</span><span class="sw-scope">variable · variable.parameter</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#C9D1D9"></span><span class="sw-hex">#C9D1D9</span></div><span class="sw-role">Variables, properties</span><span class="sw-scope">variable.other</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#8B949E"></span><span class="sw-hex">#8B949E</span></div><span class="sw-role">Comments</span><span class="sw-scope">comment</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#7EE787"></span><span class="sw-hex">#7EE787</span></div><span class="sw-role">Tags, insertions</span><span class="sw-scope">entity.name.tag</span></div>
+        </div>
+
+        <h4>Chrome</h4>
+        <div class="pal">
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#121314"></span><span class="sw-hex">#121314</span></div><span class="sw-role">Editor background</span><span class="sw-scope">editor.background</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#191A1B"></span><span class="sw-hex">#191A1B</span></div><span class="sw-role">Sidebar, status bar</span><span class="sw-scope">sideBar.background</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#202122"></span><span class="sw-hex">#202122</span></div><span class="sw-role">Floats, popups</span><span class="sw-scope">editorWidget.background</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#242526"></span><span class="sw-hex">#242526</span></div><span class="sw-role">Current line</span><span class="sw-scope">editor.lineHighlightBackground</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#BBBEBF"></span><span class="sw-hex">#BBBEBF</span></div><span class="sw-role">Foreground, cursor</span><span class="sw-scope">editor.foreground</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#858889"></span><span class="sw-hex">#858889</span></div><span class="sw-role">Line numbers</span><span class="sw-scope">editorLineNumber.foreground</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#245C73"></span><span class="sw-hex">#245C73</span></div><span class="sw-role">Selection <span style="color:var(--dim)">(composited)</span></span><span class="sw-scope">editor.selectionBackground</span></div>
+          <div class="sw"><div class="sw-top"><span class="chip" style="background:#F14C4C"></span><span class="sw-hex">#F14C4C</span></div><span class="sw-role">Errors</span><span class="sw-scope">editorError.foreground</span></div>
+        </div>
+      </section>
+
+      <!-- ═════════════════════════════════════════════════════════ TERMINAL -->
+      <section id="terminal">
+        <h2>Terminal &amp; tmux</h2>
+        <p class="sub">
+          The editor background is <code>#121314</code>. On a terminal set to a different dark
+          background, panels and splits will not line up with the editor — so the repo ships
+          generated schemes for five hosts in <code>terminal/</code>.
+        </p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Host</th><th>How to apply</th></tr></thead>
+            <tbody>
+              <tr><td class="act">Alacritty</td><td><code>general.import = ["~/.config/alacritty/vscode-2026-dark.toml"]</code></td></tr>
+              <tr><td class="act">Kitty</td><td><code>include vscode-2026-dark.conf</code></td></tr>
+              <tr><td class="act">Ghostty</td><td><code>theme = vscode-2026-dark</code></td></tr>
+              <tr><td class="act">WezTerm</td><td><code>colors = require("vscode-2026-dark")</code></td></tr>
+              <tr><td class="act">tmux</td><td><code>source-file ~/.config/tmux/vscode-2026-dark.conf</code></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note warn">
+          <p><strong>Terminal opacity breaks exactness.</strong> A translucent window composites
+          <code>#121314</code> against whatever is behind it, so the editor background is no longer the
+          value the theme specifies. Set opacity to <code>1.0</code> if you want the colours to be
+          literally correct.</p>
+        </div>
+        <p>
+          Under tmux, true colour must survive the pane. tmux 3.2+ usually detects it, but if colours
+          look flattened, force it:
+        </p>
+<pre><code><span class="f">set</span> -g default-terminal <span class="s">"tmux-256color"</span>
+<span class="f">set</span> -ga terminal-overrides <span class="s">",*256col*:Tc"</span></code></pre>
+      </section>
+
+      <!-- ═════════════════════════════════════════════════════════════ KEYS -->
+      <section id="keys">
+        <h2>Keybindings</h2>
+        <p class="sub">
+          VS&nbsp;Code chords are mapped wherever a terminal can express them. Every one also has a
+          <kbd>Space</kbd> leader equivalent that works anywhere — press <kbd>Space</kbd> in normal
+          mode to browse them.
+        </p>
+
+        <div class="note warn">
+          <p><strong>Read this before blaming a binding.</strong> Terminals traditionally encode
+          <kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>X</kbd> identically to <kbd>Ctrl</kbd><kbd>X</kbd>.
+          Telling them apart needs the <strong>kitty keyboard protocol</strong>.</p>
+          <p>
+            <span class="pill g">Kitty</span> <span class="pill g">Ghostty</span>
+            <span class="pill g">WezTerm</span> <span class="pill g">Alacritty 0.13+</span>
+            <span class="pill r">Terminal.app</span> <span class="pill r">older xterm</span>
+          </p>
+          <p>Without it, the <kbd>Ctrl</kbd><kbd>Shift</kbd> rows below do nothing. Use the leader
+          alternative instead. <kbd>Ctrl</kbd><kbd>/</kbd> is the other casualty — most terminals send
+          <kbd>Ctrl</kbd><kbd>_</kbd>, which is mapped alongside it.</p>
+        </div>
+
+        <h3>File</h3>
+        <div class="tw"><table>
+          <colgroup><col><col class="w-key"><col></colgroup>
+          <thead><tr><th>Action</th><th>Key</th><th>Always works</th></tr></thead>
+          <tbody>
+            <tr><td class="act">Save</td><td><kbd>Ctrl</kbd><kbd>S</kbd></td><td class="alt"><code>:w</code></td></tr>
+            <tr><td class="act">New file</td><td><kbd>Ctrl</kbd><kbd>N</kbd></td><td class="alt"><code>:enew</code></td></tr>
+            <tr><td class="act">Close editor</td><td><kbd>Ctrl</kbd><kbd>W</kbd></td><td class="alt"><code>:bd</code></td></tr>
+            <tr><td class="act">Go to File</td><td><kbd>Ctrl</kbd><kbd>P</kbd></td><td class="alt"><kbd>Space</kbd> <code>ff</code></td></tr>
+            <tr><td class="act">Command Palette</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>P</kbd></td><td class="alt"><kbd>Space</kbd> <code>fc</code></td></tr>
+            <tr><td class="act">Recent files</td><td>—</td><td class="alt"><kbd>Space</kbd> <code>fr</code></td></tr>
+            <tr><td class="act">Open editors</td><td>—</td><td class="alt"><kbd>Space</kbd> <code>fb</code></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note">
+          <p>Files auto-save 500&nbsp;ms after you stop typing, mirroring <code>files.autoSave</code> —
+          including <code>autoSaveWhenNoErrors</code> (a buffer with error diagnostics is held back)
+          and <code>autoSaveWorkspaceFilesOnly</code> (only files under the working directory).</p>
+        </div>
+
+        <h3>Edit</h3>
+        <div class="tw"><table>
+          <colgroup><col><col class="w-key"></colgroup>
+          <thead><tr><th>Action</th><th>Key</th></tr></thead>
+          <tbody>
+            <tr><td class="act">Undo <span style="color:var(--dim)">/</span> Redo</td><td><kbd>Ctrl</kbd><kbd>Z</kbd><span class="kbd-sep">/</span><kbd>Ctrl</kbd><kbd>Y</kbd></td></tr>
+            <tr><td class="act">Select all</td><td><kbd>Ctrl</kbd><kbd>A</kbd></td></tr>
+            <tr><td class="act">Toggle line comment</td><td><kbd>Ctrl</kbd><kbd>/</kbd></td></tr>
+            <tr><td class="act">Toggle block comment</td><td><kbd>Shift</kbd><kbd>Alt</kbd><kbd>A</kbd></td></tr>
+            <tr><td class="act">Move line up <span style="color:var(--dim)">/</span> down</td><td><kbd>Alt</kbd><kbd>↑</kbd><span class="kbd-sep">/</span><kbd>Alt</kbd><kbd>↓</kbd></td></tr>
+            <tr><td class="act">Duplicate line</td><td><kbd>Shift</kbd><kbd>Alt</kbd><kbd>↓</kbd></td></tr>
+            <tr><td class="act">Indent <span style="color:var(--dim)">/</span> outdent selection</td><td><kbd>Tab</kbd><span class="kbd-sep">/</span><kbd>Shift</kbd><kbd>Tab</kbd></td></tr>
+            <tr><td class="act">Expand <span style="color:var(--dim)">/</span> shrink selection</td><td><kbd>Shift</kbd><kbd>Alt</kbd><kbd>→</kbd><span class="kbd-sep">/</span><kbd>←</kbd></td></tr>
+            <tr><td class="act">Format document</td><td><kbd>Shift</kbd><kbd>Alt</kbd><kbd>F</kbd></td></tr>
+            <tr><td class="act">Trigger suggestion</td><td><kbd>Ctrl</kbd><kbd>Space</kbd></td></tr>
+          </tbody>
+        </table></div>
+        <div class="note">
+          <p><strong>Not mapped: <kbd>Ctrl</kbd><kbd>D</kbd> multi-cursor.</strong> Neovim has no true
+          multi-cursor. The idiomatic equivalents are <code>:%s/old/new/gc</code> and the dot-repeat
+          workflow — <code>ciw</code>, then <code>n.</code> to repeat at each next match. Add
+          <a href="https://github.com/jake-stewart/multicursor.nvim">multicursor.nvim</a> if you want the real thing.</p>
+        </div>
+
+        <h3>Navigation</h3>
+        <div class="tw"><table>
+          <colgroup><col><col class="w-key"></colgroup>
+          <thead><tr><th>Action</th><th>Key</th></tr></thead>
+          <tbody>
+            <tr><td class="act">Go to Definition</td><td><kbd>F12</kbd><span class="kbd-sep">or</span><code>gd</code></td></tr>
+            <tr><td class="act">Go to References</td><td><kbd>Shift</kbd><kbd>F12</kbd><span class="kbd-sep">or</span><code>gr</code></td></tr>
+            <tr><td class="act">Go to Implementation</td><td><code>gi</code></td></tr>
+            <tr><td class="act">Go to Type Definition</td><td><code>gy</code></td></tr>
+            <tr><td class="act">Go to Symbol (file)</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>O</kbd></td></tr>
+            <tr><td class="act">Go to Symbol (workspace)</td><td><kbd>Ctrl</kbd><kbd>T</kbd></td></tr>
+            <tr><td class="act">Search across files</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>F</kbd></td></tr>
+            <tr><td class="act">Next <span style="color:var(--dim)">/</span> previous editor</td><td><kbd>Alt</kbd><kbd>→</kbd><span class="kbd-sep">/</span><kbd>Alt</kbd><kbd>←</kbd></td></tr>
+            <tr><td class="act">Go to editor <em>n</em></td><td><kbd>Alt</kbd><kbd>1</kbd> … <kbd>9</kbd></td></tr>
+            <tr><td class="act">Focus editor group</td><td><kbd>Ctrl</kbd><kbd>H</kbd><span class="kbd-sep">/</span><kbd>J</kbd><span class="kbd-sep">/</span><kbd>K</kbd><span class="kbd-sep">/</span><kbd>L</kbd></td></tr>
+            <tr><td class="act">Split editor right</td><td><kbd>Ctrl</kbd><kbd>\</kbd></td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>Language features</h3>
+        <div class="tw"><table>
+          <colgroup><col><col class="w-key"></colgroup>
+          <thead><tr><th>Action</th><th>Key</th></tr></thead>
+          <tbody>
+            <tr><td class="act">Show hover</td><td><kbd>K</kbd></td></tr>
+            <tr><td class="act">Signature help</td><td><kbd>Ctrl</kbd><kbd>K</kbd></td></tr>
+            <tr><td class="act">Rename symbol</td><td><kbd>F2</kbd></td></tr>
+            <tr><td class="act">Quick fix</td><td><kbd>Ctrl</kbd><kbd>.</kbd><span class="kbd-sep">or</span><kbd>Space</kbd> <code>ca</code></td></tr>
+            <tr><td class="act">Next <span style="color:var(--dim)">/</span> previous problem</td><td><kbd>F8</kbd><span class="kbd-sep">/</span><kbd>Shift</kbd><kbd>F8</kbd></td></tr>
+            <tr><td class="act">Problems panel</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>M</kbd></td></tr>
+            <tr><td class="act">Toggle inlay hints</td><td><kbd>Space</kbd> <code>uh</code></td></tr>
+          </tbody>
+        </table></div>
+
+        <h3>Panels</h3>
+        <div class="tw"><table>
+          <colgroup><col><col class="w-key"></colgroup>
+          <thead><tr><th>Action</th><th>Key</th></tr></thead>
+          <tbody>
+            <tr><td class="act">Toggle Explorer</td><td><kbd>Ctrl</kbd><kbd>B</kbd></td></tr>
+            <tr><td class="act">Focus Explorer, reveal file</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>E</kbd></td></tr>
+            <tr><td class="act">Integrated terminal</td><td><kbd>Ctrl</kbd><kbd>`</kbd></td></tr>
+            <tr><td class="act">Source control</td><td><kbd>Space</kbd> <code>ge</code></td></tr>
+            <tr><td class="act">Outline</td><td><kbd>Space</kbd> <code>xs</code></td></tr>
+          </tbody>
+        </table></div>
+        <p>
+          Inside the Explorer: <code>a</code> add file, <code>A</code> add directory, <code>d</code> delete,
+          <code>r</code> rename, <code>c</code> copy, <code>x</code> cut, <code>p</code> paste,
+          <code>H</code> toggle hidden, <code>R</code> refresh.
+        </p>
+
+        <h3>Git</h3>
+        <div class="tw"><table>
+          <colgroup><col><col class="w-key"></colgroup>
+          <thead><tr><th>Action</th><th>Key</th></tr></thead>
+          <tbody>
+            <tr><td class="act">Next <span style="color:var(--dim)">/</span> previous change</td><td><code>]c</code><span class="kbd-sep">/</span><code>[c</code></td></tr>
+            <tr><td class="act">Stage hunk</td><td><kbd>Space</kbd> <code>hs</code></td></tr>
+            <tr><td class="act">Reset hunk</td><td><kbd>Space</kbd> <code>hr</code></td></tr>
+            <tr><td class="act">Preview hunk</td><td><kbd>Space</kbd> <code>hp</code></td></tr>
+            <tr><td class="act">Blame line</td><td><kbd>Space</kbd> <code>hb</code></td></tr>
+            <tr><td class="act">Toggle inline blame</td><td><kbd>Space</kbd> <code>ub</code></td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════ PYTHON -->
+      <section id="python">
+        <h2>Python</h2>
+        <p class="sub">
+          Two servers, matching the split you already run in VS&nbsp;Code.
+        </p>
+        <div class="grid2">
+          <div class="card">
+            <h5>basedpyright</h5>
+            <p>Types, hovers, completion, inlay hints, and the semantic tokens that drive the syntax
+            colours. An open-source fork of Pyright with the richness Pylance provides — Pylance
+            itself is closed and cannot run outside VS&nbsp;Code.</p>
+          </div>
+          <div class="card">
+            <h5>ruff</h5>
+            <p>Lint, format, and organise imports — the same engine as your
+            <code>charliermarsh.ruff</code> extension, reading the same
+            <code>pyproject.toml</code>.</p>
+          </div>
+        </div>
+
+        <h4>Settings worth knowing</h4>
+        <div class="tw"><table>
+          <thead><tr><th>Setting</th><th>Value here</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td><code>typeCheckingMode</code></td><td class="act">standard</td><td class="alt">basedpyright's own default is <code>recommended</code>, far stricter than Pylance. <code>standard</code> reproduces what VS&nbsp;Code shows you today.</td></tr>
+            <tr><td><code>diagnosticMode</code></td><td class="act">openFilesOnly</td><td class="alt">Matches VS&nbsp;Code. Set to <code>workspace</code> for project-wide errors.</td></tr>
+            <tr><td><code>disableOrganizeImports</code></td><td class="act">true</td><td class="alt">Ruff owns import order; stops the two servers fighting.</td></tr>
+            <tr><td><code>hoverProvider</code> (ruff)</td><td class="act">off</td><td class="alt">basedpyright's hovers are better; avoids duplicates.</td></tr>
+          </tbody>
+        </table></div>
+
+        <h4>Format on save</h4>
+        <p>
+          Mirrors your <code>[python]</code> block — <code>ruff_fix</code>, then
+          <code>ruff_organize_imports</code>, then <code>ruff_format</code>, in that order.
+          Toggle it without editing config:
+        </p>
+<pre><code><span class="f">:FormatDisable</span>      <span class="c">" globally</span>
+<span class="f">:FormatDisable!</span>     <span class="c">" this buffer only</span>
+<span class="f">:FormatEnable</span></code></pre>
+
+        <div class="note">
+          <p>Some overlap between the two servers is expected — both flag undefined names, exactly as
+          the two extensions do in VS&nbsp;Code.</p>
+        </div>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════ DEBUG -->
+      <section id="debug">
+        <h2>Debugging</h2>
+        <p class="sub">
+          nvim-dap with debugpy, on the VS&nbsp;Code function keys. <kbd>F5</kbd> starts the first
+          configuration immediately rather than prompting, as VS&nbsp;Code does. A project's
+          <code>.vscode/launch.json</code> is picked up automatically.
+        </p>
+        <div class="tw"><table>
+          <colgroup><col><col class="w-key"></colgroup>
+          <thead><tr><th>Action</th><th>Key</th></tr></thead>
+          <tbody>
+            <tr><td class="act">Start <span style="color:var(--dim)">/</span> continue</td><td><kbd>F5</kbd></td></tr>
+            <tr><td class="act">Start, choosing a configuration</td><td><kbd>Ctrl</kbd><kbd>F5</kbd><span class="kbd-sep">or</span><kbd>Space</kbd> <code>dS</code></td></tr>
+            <tr><td class="act">Stop</td><td><kbd>Shift</kbd><kbd>F5</kbd></td></tr>
+            <tr><td class="act">Restart</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>F5</kbd></td></tr>
+            <tr><td class="act">Toggle breakpoint</td><td><kbd>F9</kbd></td></tr>
+            <tr><td class="act">Conditional breakpoint</td><td><kbd>Shift</kbd><kbd>F9</kbd></td></tr>
+            <tr><td class="act">Step over</td><td><kbd>F10</kbd></td></tr>
+            <tr><td class="act">Step into</td><td><kbd>F11</kbd></td></tr>
+            <tr><td class="act">Step out</td><td><kbd>Shift</kbd><kbd>F11</kbd></td></tr>
+            <tr><td class="act">Toggle debug panel</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>D</kbd></td></tr>
+            <tr><td class="act">Evaluate expression</td><td><kbd>Space</kbd> <code>dw</code></td></tr>
+            <tr><td class="act">Debug REPL</td><td><kbd>Space</kbd> <code>dr</code></td></tr>
+            <tr><td class="act">Debug nearest test</td><td><kbd>Space</kbd> <code>dt</code></td></tr>
+          </tbody>
+        </table></div>
+
+        <p>
+          The panel opens on session start with Scopes, Watches, Stack Frames and Breakpoints on the
+          left, REPL and console at the bottom; the status bar turns orange while stopped. Variable
+          values appear inline as virtual text at end of line.
+        </p>
+
+        <div class="note warn">
+          <p><strong>The interpreter split that trips everyone up.</strong> The <em>adapter</em>
+          interpreter must have <code>debugpy</code> importable — this config uses Mason's dedicated
+          venv. The <em>debuggee</em> interpreter is chosen separately per configuration via
+          <code>pythonPath</code>, preferring <code>$VIRTUAL_ENV</code>, then <code>$CONDA_PREFIX</code>,
+          then <code>.venv/</code>, <code>venv/</code>, <code>env/</code> in the project root.</p>
+          <p>Pointing the adapter at a project venv without debugpy is what produces
+          <code>adapter python exited with 1</code>.</p>
+        </div>
+
+        <h4>Configurations</h4>
+        <div class="tw"><table>
+          <thead><tr><th>Name</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td class="act">Python: Current File</td><td class="alt">Runs the open file. The <kbd>F5</kbd> default.</td></tr>
+            <tr><td class="act">Python: Module</td><td class="alt">Prompts for a module, runs it with <code>-m</code>.</td></tr>
+            <tr><td class="act">Python: File with Arguments</td><td class="alt">Prompts for argv.</td></tr>
+            <tr><td class="act">Python: Attach (port 5678)</td><td class="alt">Attaches to a waiting <code>debugpy.listen()</code>.</td></tr>
+          </tbody>
+        </table></div>
+      </section>
+
+      <!-- ═══════════════════════════════════════════════════════════ CUSTOM -->
+      <section id="custom">
+        <h2>Customising</h2>
+        <p class="sub">
+          <code>lua/vscode2026/generated.lua</code> is generated and will be overwritten. Personal
+          changes belong in the <code>overrides</code> table, which is applied on top and survives
+          regeneration.
+        </p>
+<pre><code><span class="f">require</span>(<span class="s">'vscode2026'</span>).setup({
+  transparent     = <span class="k">false</span>,   <span class="c">-- drop the editor background</span>
+  italic_comments = <span class="k">true</span>,
+  overrides = {
+    Comment                 = { fg = <span class="s">'#7A8188'</span>, italic = <span class="k">false</span> },
+    [<span class="s">'@lsp.type.parameter'</span>] = { fg = <span class="s">'#9CDCFE'</span> },
+    CursorLine              = { bg = <span class="s">'#1B1D1F'</span> },
+  },
+})</code></pre>
+        <p>The palette is available if you would rather build on it than hard-code hex:</p>
+<pre><code><span class="k">local</span> p = <span class="f">require</span>(<span class="s">'vscode2026'</span>).<span class="f">palette</span>()
+<span class="c">-- p.bg, p.fg, p.accent, p.error, p.git_add, p.ansi.blue, ...</span></code></pre>
+
+        <h4>Adding a language server</h4>
+        <p>
+          Add it to <code>ensure_installed</code> in <code>lua/plugins/lsp.lua</code>; anything listed
+          is enabled automatically. Because colours come from semantic tokens and treesitter captures
+          rather than per-language rules, a new language picks up Dark&nbsp;2026 with no theme work.
+        </p>
+
+        <h4>Adding plugins</h4>
+        <p>
+          Drop a file into <code>lua/plugins/</code>. Everything there is imported automatically —
+          no registration step.
+        </p>
+
+        <h4>Turning off auto-save</h4>
+        <p>
+          Delete the <code>vsc_autosave</code> autocommand block in
+          <code>lua/config/autocmds.lua</code>, or change <code>DELAY</code> from <code>500</code>.
+        </p>
+      </section>
+
+      <!-- ════════════════════════════════════════════════════════════ REGEN -->
+      <section id="regen">
+        <h2>Regenerating</h2>
+        <p class="sub">When VS&nbsp;Code updates its theme, re-read it rather than chasing diffs by hand.</p>
+        <div class="tw"><table>
+          <thead><tr><th>Command</th><th>Effect</th></tr></thead>
+          <tbody>
+            <tr><td><code>make theme</code></td><td class="alt">Re-read the VS&nbsp;Code theme JSON on this machine and rewrite <code>generated.lua</code>.</td></tr>
+            <tr><td><code>make terminal</code></td><td class="alt">Rewrite the five terminal emulator palettes from that output.</td></tr>
+            <tr><td><code>make check</code></td><td class="alt">Parse-check every Lua file.</td></tr>
+            <tr><td><code>make</code></td><td class="alt">Theme and terminal together.</td></tr>
+          </tbody>
+        </table></div>
+        <p>
+          The generator is not specific to Dark&nbsp;2026 — point it at any VS&nbsp;Code theme,
+          including one from a marketplace extension in
+          <code>~/.vscode/extensions/&lt;publisher&gt;.&lt;name&gt;/themes/</code>:
+        </p>
+<pre><code><span class="c">$</span> make theme THEME=/path/to/some-theme.json</code></pre>
+      </section>
+
+      <!-- ══════════════════════════════════════════════════════════ TROUBLE -->
+      <section id="trouble">
+        <h2>Troubleshooting</h2>
+
+        <h3>Colours look washed out</h3>
+        <p>
+          The terminal is not in true colour. <code>:lua print(vim.o.termguicolors)</code> must report
+          <code>true</code>, and <code>$COLORTERM</code> should be <code>truecolor</code>. Over SSH,
+          <code>TERM</code> must survive the hop.
+        </p>
+
+        <h3>One token is the wrong colour</h3>
+        <p>
+          Put the cursor on it and run <code>:Inspect</code> — that reports the treesitter capture, the
+          LSP semantic token, and the group actually winning. Compare against VS&nbsp;Code's
+          <strong>Developer: Inspect Editor Tokens and Scopes</strong>. Same scope but different colour
+          is a port bug; different scopes means the parser differs, not the theme.
+        </p>
+
+        <h3>Boxes or blanks instead of icons</h3>
+        <p>
+          The terminal font is not a Nerd Font — Neovim cannot fix that from inside. Confirm the
+          codepoints survived with
+          <code>:lua print(vim.inspect(require('config.icons').diagnostics))</code>; any value printing
+          as <code>""</code> means the file was corrupted in transit.
+        </p>
+        <div class="note info">
+          <p>Icons are defined by codepoint through <code>nr2char()</code> rather than as literal
+          glyphs, precisely because those glyphs live in the Unicode Private Use Area and are
+          routinely stripped by copy/paste, shell heredocs and some editors. The config targets Nerd
+          Fonts <strong>v3</strong>.</p>
+        </div>
+
+        <h3>No Python diagnostics or completion</h3>
+        <p>
+          Check <code>:LspInfo</code>, then <code>:Mason</code>. basedpyright needs <strong>Node.js</strong>
+          and will fail to install without it. If your own package imports are unresolved, activate the
+          venv before launching, or add a <code>pyrightconfig.json</code>:
+        </p>
+<pre><code>{ <span class="s">"venvPath"</span>: <span class="s">"."</span>, <span class="s">"venv"</span>: <span class="s">".venv"</span>, <span class="s">"extraPaths"</span>: [<span class="s">"src"</span>] }</code></pre>
+
+        <h3>Something broke after an update</h3>
+        <p>
+          <code>lazy-lock.json</code> pins all 33 plugins to known-good commits — that file is what
+          makes an install reproducible across hosts.
+        </p>
+<pre><code><span class="c">$</span> git checkout lazy-lock.json
+<span class="c">$</span> nvim --headless <span class="s">"+Lazy! restore"</span> +qa</code></pre>
+
+        <h3>Reverting entirely</h3>
+        <p>
+          <code>bootstrap.sh</code> never deletes: your previous config is at
+          <code>~/.config/nvim.backup.&lt;timestamp&gt;</code>. Swap it back and clear the state
+          directories.
+        </p>
+      </section>
+
+      <hr>
+    </div>
+
+    <div class="statusbar">
+      <span class="sb-item"><span class="dot"></span>vscode-2026-dark</span>
+      <span class="sb-item">504 highlight groups</span>
+      <span class="sb-item">329 UI colours · 118 token rules</span>
+      <span class="sb-item">basedpyright + ruff</span>
+      <span class="sb-item"><a href="https://github.com/xmandeng/nvim-vscode-2026">github.com/xmandeng/nvim-vscode-2026</a></span>
+    </div>
+  </main>
+</div>

@@ -50,6 +50,8 @@ Node.js (basedpyright), Python 3, ripgrep, and a [Nerd Font](https://www.nerdfon
 
 ## Documentation
 
+**[Read the manual](https://claude.ai/code/artifact/b3626600-5d91-4780-962d-1aaf920c85b9)** — the whole thing in one page.
+
 - [docs/INSTALL.md](docs/INSTALL.md) — prerequisites, per-platform notes, side-by-side installs
 - [docs/KEYBINDINGS.md](docs/KEYBINDINGS.md) — the full VS Code keymap and its limits
 - [docs/CUSTOMIZING.md](docs/CUSTOMIZING.md) — overriding colours, adding servers, regenerating
