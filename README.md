@@ -31,7 +31,7 @@ make theme
 ## Install
 
 ```bash
-git clone https://github.com/OWNER/nvim-vscode-2026.git
+git clone https://github.com/xmandeng/nvim-vscode-2026.git
 cd nvim-vscode-2026
 ./bootstrap.sh
 ```

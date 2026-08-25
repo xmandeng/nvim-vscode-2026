@@ -42,7 +42,7 @@ sudo dnf install -y neovim git gcc make ripgrep nodejs python3
 ## Install
 
 ```bash
-git clone https://github.com/OWNER/nvim-vscode-2026.git ~/src/nvim-vscode-2026
+git clone https://github.com/xmandeng/nvim-vscode-2026.git ~/src/nvim-vscode-2026
 cd ~/src/nvim-vscode-2026
 ./bootstrap.sh
 ```
