@@ -107,10 +107,10 @@ Per session or per buffer:
 
 Permanently: remove `format_on_save` from the conform spec in `lsp.lua`.
 
-## Turning off auto-save
+## Auto-save
 
-Auto-save lives in `nvim/lua/config/autocmds.lua`. Delete the `vsc_autosave`
-autocommand block, or change `DELAY` from `500`.
+There is none, on purpose. Saving runs format-on-save, so a timer that saves for
+you would also reformat the file while you are still typing it.
 
 ## Adding plugins
 

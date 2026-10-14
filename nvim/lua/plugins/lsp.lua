@@ -95,13 +95,12 @@ return {
           map('n', '<F12>', vim.lsp.buf.definition, 'Go to Definition')
           map('n', 'gd', vim.lsp.buf.definition, 'Go to Definition')
           map('n', '<C-S-F12>', vim.lsp.buf.implementation, 'Go to Implementation')
-          map('n', 'gi', vim.lsp.buf.implementation, 'Go to Implementation')
           map('n', '<S-F12>', '<Cmd>Telescope lsp_references<CR>', 'Go to References')
-          map('n', 'gr', '<Cmd>Telescope lsp_references<CR>', 'Go to References')
           map('n', 'gy', vim.lsp.buf.type_definition, 'Go to Type Definition')
           map('n', 'gD', vim.lsp.buf.declaration, 'Go to Declaration')
           map('n', 'K', function() vim.lsp.buf.hover({ border = 'single' }) end, 'Show Hover')
-          map({ 'n', 'i' }, '<C-k>', function() vim.lsp.buf.signature_help({ border = 'single' }) end, 'Signature Help')
+          -- insert mode only: in normal mode Ctrl+K is "focus the window above"
+          map('i', '<C-k>', function() vim.lsp.buf.signature_help({ border = 'single' }) end, 'Signature Help')
           map('n', '<F2>', vim.lsp.buf.rename, 'Rename Symbol')
           map({ 'n', 'v' }, '<C-.>', vim.lsp.buf.code_action, 'Quick Fix')
           map({ 'n', 'v' }, '<leader>ca', vim.lsp.buf.code_action, 'Code Action')
@@ -149,7 +148,7 @@ return {
     },
   },
 
-  -- ── formatting: format-on-save + fixAll + organizeImports, via ruff ────────
+  -- ── formatting: format-on-save + organizeImports, via ruff ─────────────────
   {
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -167,7 +166,9 @@ return {
         return { timeout_ms = 1000, lsp_format = 'fallback' }
       end,
       formatters_by_ft = {
-        python = { 'ruff_fix', 'ruff_organize_imports', 'ruff_format' },
+        -- no ruff_fix: it deletes an import you have just typed but not used
+        -- yet. Fixes stay one keystroke away as code actions (Space ca).
+        python = { 'ruff_organize_imports', 'ruff_format' },
         lua = { 'stylua' },
         json = { 'prettier' }, jsonc = { 'prettier' },
         yaml = { 'prettier' }, markdown = { 'prettier' },

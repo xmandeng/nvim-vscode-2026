@@ -17,7 +17,6 @@ return {
       { '<C-S-p>', '<Cmd>Telescope commands<CR>', desc = 'Command Palette' },
       { '<C-S-f>', '<Cmd>Telescope live_grep<CR>', desc = 'Search in Files' },
       { '<C-S-o>', '<Cmd>Telescope lsp_document_symbols<CR>', desc = 'Go to Symbol' },
-      { '<C-t>', '<Cmd>Telescope lsp_workspace_symbols<CR>', desc = 'Go to Symbol in Workspace' },
       { '<leader>ff', '<Cmd>Telescope find_files<CR>', desc = 'Find files' },
       { '<leader>fg', '<Cmd>Telescope live_grep<CR>', desc = 'Live grep' },
       { '<leader>fb', '<Cmd>Telescope buffers<CR>', desc = 'Open editors' },
@@ -26,6 +25,7 @@ return {
       { '<leader>fc', '<Cmd>Telescope commands<CR>', desc = 'Commands' },
       { '<leader>fk', '<Cmd>Telescope keymaps<CR>', desc = 'Keymaps' },
       { '<leader>fd', '<Cmd>Telescope diagnostics<CR>', desc = 'Diagnostics' },
+      { '<leader>fS', '<Cmd>Telescope lsp_workspace_symbols<CR>', desc = 'Go to Symbol in Workspace' },
     },
     opts = function()
       local actions = require('telescope.actions')

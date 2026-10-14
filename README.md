@@ -18,7 +18,7 @@ make theme
 | Dark 2026 colour theme | generated port, 504 highlight groups |
 | Pylance | **basedpyright** (types, hovers, inlay hints) |
 | Ruff extension | **ruff** LSP (lint, format, organise imports) |
-| Explorer sidebar | neo-tree — <kbd>Ctrl</kbd>+<kbd>B</kbd> |
+| Explorer sidebar | neo-tree — <kbd>Space</kbd> `e` |
 | Run & Debug | nvim-dap + debugpy — <kbd>F5</kbd>/<kbd>F9</kbd>/<kbd>F10</kbd>/<kbd>F11</kbd> |
 | Go to File | Telescope — <kbd>Ctrl</kbd>+<kbd>P</kbd> |
 | Command Palette | Telescope — <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> |

@@ -351,7 +351,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
         <p class="sub">Open a Python file and confirm four things.</p>
         <div class="grid2">
           <div class="card"><h5>Language servers</h5><p><code>:LspInfo</code> lists <strong>basedpyright</strong> and <strong>ruff</strong>.</p></div>
-          <div class="card"><h5>File tree</h5><p><kbd>Ctrl</kbd><kbd>B</kbd> opens the Explorer on the left.</p></div>
+          <div class="card"><h5>File tree</h5><p><kbd>Space</kbd> <code>e</code> opens the Explorer on the left.</p></div>
           <div class="card"><h5>Debugger</h5><p><kbd>F9</kbd> sets a breakpoint, <kbd>F5</kbd> starts and stops on it.</p></div>
           <div class="card"><h5>Colours</h5><p><code>:Inspect</code> on a token reports the group actually winning.</p></div>
         </div>
@@ -530,7 +530,10 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
       <section id="keys">
         <h2>Keybindings</h2>
         <p class="sub">
-          VS&nbsp;Code chords are mapped wherever a terminal can express them. Every one also has a
+          VS&nbsp;Code chords are mapped wherever a terminal can express them and they do not hide a
+          core Vim key (<kbd>Ctrl</kbd><kbd>W</kbd>, <kbd>Ctrl</kbd><kbd>A</kbd>, <kbd>Ctrl</kbd><kbd>Z</kbd>,
+          <kbd>Ctrl</kbd><kbd>Y</kbd>, <kbd>Ctrl</kbd><kbd>N</kbd>, <kbd>Ctrl</kbd><kbd>B</kbd>,
+          <kbd>Ctrl</kbd><kbd>T</kbd>, <code>gi</code> and <code>gr</code> keep their Vim meaning). Every one also has a
           <kbd>Space</kbd> leader equivalent that works anywhere — press <kbd>Space</kbd> in normal
           mode to browse them.
         </p>
@@ -555,8 +558,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
           <thead><tr><th>Action</th><th>Key</th><th>Always works</th></tr></thead>
           <tbody>
             <tr><td class="act">Save</td><td><kbd>Ctrl</kbd><kbd>S</kbd></td><td class="alt"><code>:w</code></td></tr>
-            <tr><td class="act">New file</td><td><kbd>Ctrl</kbd><kbd>N</kbd></td><td class="alt"><code>:enew</code></td></tr>
-            <tr><td class="act">Close editor</td><td><kbd>Ctrl</kbd><kbd>W</kbd></td><td class="alt"><code>:bd</code></td></tr>
+            <tr><td class="act">New file</td><td>—</td><td class="alt"><code>:enew</code></td></tr>
+            <tr><td class="act">Close editor</td><td>—</td><td class="alt"><code>:bd</code></td></tr>
             <tr><td class="act">Go to File</td><td><kbd>Ctrl</kbd><kbd>P</kbd></td><td class="alt"><kbd>Space</kbd> <code>ff</code></td></tr>
             <tr><td class="act">Command Palette</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>P</kbd></td><td class="alt"><kbd>Space</kbd> <code>fc</code></td></tr>
             <tr><td class="act">Recent files</td><td>—</td><td class="alt"><kbd>Space</kbd> <code>fr</code></td></tr>
@@ -564,9 +567,9 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
           </tbody>
         </table></div>
         <div class="note">
-          <p>Files auto-save 500&nbsp;ms after you stop typing, mirroring <code>files.autoSave</code> —
-          including <code>autoSaveWhenNoErrors</code> (a buffer with error diagnostics is held back)
-          and <code>autoSaveWorkspaceFilesOnly</code> (only files under the working directory).</p>
+          <p>There is no auto-save: a file is written when you save it. Saving formats the file and
+          sorts its imports, but does not apply ruff's fixes, so an import you have just added is
+          never removed before you use it. Apply a fix with <kbd>Space</kbd> <code>ca</code>.</p>
         </div>
 
         <h3>Edit</h3>
@@ -574,8 +577,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
           <colgroup><col><col class="w-key"></colgroup>
           <thead><tr><th>Action</th><th>Key</th></tr></thead>
           <tbody>
-            <tr><td class="act">Undo <span style="color:var(--dim)">/</span> Redo</td><td><kbd>Ctrl</kbd><kbd>Z</kbd><span class="kbd-sep">/</span><kbd>Ctrl</kbd><kbd>Y</kbd></td></tr>
-            <tr><td class="act">Select all</td><td><kbd>Ctrl</kbd><kbd>A</kbd></td></tr>
+            <tr><td class="act">Undo <span style="color:var(--dim)">/</span> Redo</td><td><code>u</code><span class="kbd-sep">/</span><kbd>Ctrl</kbd><kbd>R</kbd></td></tr>
+            <tr><td class="act">Select all</td><td><code>ggVG</code></td></tr>
             <tr><td class="act">Toggle line comment</td><td><kbd>Ctrl</kbd><kbd>/</kbd></td></tr>
             <tr><td class="act">Toggle block comment</td><td><kbd>Shift</kbd><kbd>Alt</kbd><kbd>A</kbd></td></tr>
             <tr><td class="act">Move line up <span style="color:var(--dim)">/</span> down</td><td><kbd>Alt</kbd><kbd>↑</kbd><span class="kbd-sep">/</span><kbd>Alt</kbd><kbd>↓</kbd></td></tr>
@@ -599,11 +602,11 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
           <thead><tr><th>Action</th><th>Key</th></tr></thead>
           <tbody>
             <tr><td class="act">Go to Definition</td><td><kbd>F12</kbd><span class="kbd-sep">or</span><code>gd</code></td></tr>
-            <tr><td class="act">Go to References</td><td><kbd>Shift</kbd><kbd>F12</kbd><span class="kbd-sep">or</span><code>gr</code></td></tr>
-            <tr><td class="act">Go to Implementation</td><td><code>gi</code></td></tr>
-            <tr><td class="act">Go to Type Definition</td><td><code>gy</code></td></tr>
-            <tr><td class="act">Go to Symbol (file)</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>O</kbd></td></tr>
-            <tr><td class="act">Go to Symbol (workspace)</td><td><kbd>Ctrl</kbd><kbd>T</kbd></td></tr>
+            <tr><td class="act">Go to References</td><td><kbd>Shift</kbd><kbd>F12</kbd><span class="kbd-sep">or</span><code>grr</code></td></tr>
+            <tr><td class="act">Go to Implementation</td><td><code>gri</code></td></tr>
+            <tr><td class="act">Go to Type Definition</td><td><code>gy</code><span class="kbd-sep">or</span><code>grt</code></td></tr>
+            <tr><td class="act">Go to Symbol (file)</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>O</kbd><span class="kbd-sep">or</span><code>gO</code></td></tr>
+            <tr><td class="act">Go to Symbol (workspace)</td><td><kbd>Space</kbd> <code>fS</code></td></tr>
             <tr><td class="act">Search across files</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>F</kbd></td></tr>
             <tr><td class="act">Next <span style="color:var(--dim)">/</span> previous editor</td><td><kbd>Alt</kbd><kbd>→</kbd><span class="kbd-sep">/</span><kbd>Alt</kbd><kbd>←</kbd></td></tr>
             <tr><td class="act">Go to editor <em>n</em></td><td><kbd>Alt</kbd><kbd>1</kbd> … <kbd>9</kbd></td></tr>
@@ -618,8 +621,8 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
           <thead><tr><th>Action</th><th>Key</th></tr></thead>
           <tbody>
             <tr><td class="act">Show hover</td><td><kbd>K</kbd></td></tr>
-            <tr><td class="act">Signature help</td><td><kbd>Ctrl</kbd><kbd>K</kbd></td></tr>
-            <tr><td class="act">Rename symbol</td><td><kbd>F2</kbd></td></tr>
+            <tr><td class="act">Signature help</td><td><kbd>Ctrl</kbd><kbd>K</kbd> (insert mode)</td></tr>
+            <tr><td class="act">Rename symbol</td><td><kbd>F2</kbd><span class="kbd-sep">or</span><code>grn</code></td></tr>
             <tr><td class="act">Quick fix</td><td><kbd>Ctrl</kbd><kbd>.</kbd><span class="kbd-sep">or</span><kbd>Space</kbd> <code>ca</code></td></tr>
             <tr><td class="act">Next <span style="color:var(--dim)">/</span> previous problem</td><td><kbd>F8</kbd><span class="kbd-sep">/</span><kbd>Shift</kbd><kbd>F8</kbd></td></tr>
             <tr><td class="act">Problems panel</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>M</kbd></td></tr>
@@ -632,7 +635,7 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
           <colgroup><col><col class="w-key"></colgroup>
           <thead><tr><th>Action</th><th>Key</th></tr></thead>
           <tbody>
-            <tr><td class="act">Toggle Explorer</td><td><kbd>Ctrl</kbd><kbd>B</kbd></td></tr>
+            <tr><td class="act">Toggle Explorer</td><td><kbd>Space</kbd> <code>e</code></td></tr>
             <tr><td class="act">Focus Explorer, reveal file</td><td><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>E</kbd></td></tr>
             <tr><td class="act">Integrated terminal</td><td><kbd>Ctrl</kbd><kbd>`</kbd></td></tr>
             <tr><td class="act">Source control</td><td><kbd>Space</kbd> <code>ge</code></td></tr>
@@ -694,8 +697,9 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
 
         <h4>Format on save</h4>
         <p>
-          Mirrors your <code>[python]</code> block — <code>ruff_fix</code>, then
-          <code>ruff_organize_imports</code>, then <code>ruff_format</code>, in that order.
+          Runs <code>ruff_organize_imports</code>, then <code>ruff_format</code>. Ruff's fixes
+          (<code>ruff_fix</code>) are left out on purpose: they delete an import you have just typed
+          but not used yet. Apply them as code actions instead.
           Toggle it without editing config:
         </p>
 <pre><code><span class="f">:FormatDisable</span>      <span class="c">" globally</span>
@@ -798,10 +802,10 @@ hr { border: 0; border-top: 1px solid var(--rule); margin: 3rem 0 0; }
           no registration step.
         </p>
 
-        <h4>Turning off auto-save</h4>
+        <h4>Auto-save</h4>
         <p>
-          Delete the <code>vsc_autosave</code> autocommand block in
-          <code>lua/config/autocmds.lua</code>, or change <code>DELAY</code> from <code>500</code>.
+          There is none, on purpose. Saving runs format-on-save, so a timer that saves for you
+          would also reformat the file while you are still typing it.
         </p>
       </section>
 

@@ -1,5 +1,5 @@
 -- neo-tree == VS Code's Explorer sidebar.
---   Ctrl+B        toggle
+--   Space e       toggle (Ctrl+B is left to Vim's page up)
 --   Ctrl+Shift+E  focus (reveals the current file)
 return {
   'nvim-neo-tree/neo-tree.nvim',
@@ -11,7 +11,6 @@ return {
     'MunifTanjim/nui.nvim',
   },
   keys = {
-    { '<C-b>', '<Cmd>Neotree toggle left<CR>', desc = 'Toggle Explorer' },
     { '<C-S-e>', '<Cmd>Neotree focus reveal left<CR>', desc = 'Focus Explorer' },
     { '<leader>e', '<Cmd>Neotree toggle left<CR>', desc = 'Toggle Explorer' },
     { '<leader>ge', '<Cmd>Neotree float git_status<CR>', desc = 'Source control' },
@@ -65,7 +64,6 @@ return {
         ['p'] = 'paste_from_clipboard',
         ['R'] = 'refresh',
         ['H'] = 'toggle_hidden',
-        ['<C-b>'] = function() vim.cmd('Neotree close') end,
       },
     },
     filesystem = {
