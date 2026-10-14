@@ -1,6 +1,12 @@
 -- Language servers. Python is basedpyright (types, hovers, inlay hints) +
 -- ruff (lint, format, organise imports) -- the same split as Pylance + the
 -- Ruff extension in VS Code.
+
+-- The only servers this config starts. Mason can hold others (left over from
+-- an earlier setup, or installed by hand with :Mason); those stay installed
+-- but are never enabled.
+local servers = { 'basedpyright', 'ruff', 'lua_ls' }
+
 return {
   {
     'mason-org/mason.nvim',
@@ -18,8 +24,8 @@ return {
     event = { 'BufReadPre', 'BufNewFile' },
     dependencies = { 'mason-org/mason.nvim', 'neovim/nvim-lspconfig' },
     opts = {
-      ensure_installed = { 'basedpyright', 'ruff', 'lua_ls' },
-      automatic_enable = true,
+      ensure_installed = servers,
+      automatic_enable = servers,
     },
   },
   {
