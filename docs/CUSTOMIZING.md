@@ -72,11 +72,13 @@ misses your layout, add a `pyrightconfig.json` or a `[tool.pyright]` section.
 ## Adding a language server
 
 ```lua
--- nvim/lua/plugins/lsp.lua, inside the mason-lspconfig opts
-ensure_installed = { 'basedpyright', 'ruff', 'lua_ls', 'gopls' },
+-- nvim/lua/plugins/lsp.lua, at the top
+local servers = { 'basedpyright', 'ruff', 'lua_ls', 'gopls' }
 ```
 
-Anything installed this way is enabled automatically. Add a `vim.lsp.config('gopls', {...})`
+That list both installs and enables. A server installed some other way (by hand
+in `:Mason`, or left over from an earlier config) is not started unless it is in
+the list. Add a `vim.lsp.config('gopls', {...})`
 block alongside the others if it needs settings. Because the colours are driven by
 semantic tokens and treesitter captures rather than per-language rules, a new
 language picks up Dark 2026 colours with no theme work.
