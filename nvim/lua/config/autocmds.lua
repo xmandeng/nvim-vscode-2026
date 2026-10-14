@@ -1,40 +1,8 @@
 -- Behavioural parity with the user's VS Code settings.json.
 local aug = function(name) return vim.api.nvim_create_augroup('vsc_' .. name, { clear = true }) end
 
--- "files.autoSave": "afterDelay", "files.autoSaveDelay": 500,
--- "files.autoSaveWhenNoErrors": true, "files.autoSaveWorkspaceFilesOnly": true
-local autosave = aug('autosave')
-local timer, DELAY = nil, 500
-
-local function should_autosave(buf)
-  if not vim.api.nvim_buf_is_valid(buf) then return false end
-  if not vim.bo[buf].modifiable or vim.bo[buf].readonly then return false end
-  if vim.bo[buf].buftype ~= '' then return false end
-  local name = vim.api.nvim_buf_get_name(buf)
-  if name == '' then return false end
-  -- autoSaveWorkspaceFilesOnly: only files under the current working directory
-  local cwd = vim.uv.cwd()
-  if cwd and not vim.startswith(vim.fs.normalize(name), vim.fs.normalize(cwd)) then
-    return false
-  end
-  -- autoSaveWhenNoErrors: hold the save while the buffer has ERROR diagnostics
-  local errs = vim.diagnostic.get(buf, { severity = vim.diagnostic.severity.ERROR })
-  if #errs > 0 then return false end
-  return true
-end
-
-vim.api.nvim_create_autocmd({ 'TextChanged', 'InsertLeave' }, {
-  group = autosave,
-  desc = 'Auto-save after 500ms, matching files.autoSave=afterDelay',
-  callback = function(ev)
-    if timer then timer:stop() end
-    timer = vim.defer_fn(function()
-      if vim.bo[ev.buf].modified and should_autosave(ev.buf) then
-        vim.api.nvim_buf_call(ev.buf, function() vim.cmd('silent! write') end)
-      end
-    end, DELAY)
-  end,
-})
+-- No auto-save: files are written only by :w (or Ctrl+S). Saving runs
+-- format-on-save, so writing behind your back would rewrite code mid-edit.
 
 -- reload when the file changes on disk (VS Code does this silently)
 vim.api.nvim_create_autocmd({ 'FocusGained', 'TermClose', 'TermLeave', 'CursorHold' }, {

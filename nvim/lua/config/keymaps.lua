@@ -4,6 +4,11 @@
 -- keyboard protocol (Alacritty >= 0.13, Kitty, Ghostty, WezTerm). In terminals
 -- without it those chords are indistinguishable from plain Ctrl+<key>; the
 -- <leader> equivalents listed alongside always work. See docs/KEYBINDINGS.md.
+--
+-- A VS Code chord is mapped only where it does not hide a core Vim key. Left to
+-- Vim on purpose: Ctrl+W (window commands), Ctrl+A (increment), Ctrl+Z/Ctrl+Y
+-- (suspend/scroll; undo is u, redo Ctrl+R), Ctrl+N, Ctrl+B (page up), Ctrl+T
+-- (tag jump back), gi (resume insert) and gr (Neovim's grr/grn/gra/gri/grt).
 
 local map = vim.keymap.set
 
@@ -13,15 +18,9 @@ end
 
 -- ── File ────────────────────────────────────────────────────────────────────
 nvi('<C-s>', '<Cmd>write<CR>', 'Save file')
-map('n', '<C-w>', '<Cmd>bdelete<CR>', { desc = 'Close editor', silent = true })
-map('n', '<C-n>', '<Cmd>enew<CR>', { desc = 'New file', silent = true })
 map('n', '<C-,>', '<Cmd>edit $MYVIMRC<CR>', { desc = 'Open settings', silent = true })
 
 -- ── Edit ────────────────────────────────────────────────────────────────────
-nvi('<C-z>', '<Cmd>undo<CR>', 'Undo')
-nvi('<C-y>', '<Cmd>redo<CR>', 'Redo')
-map('i', '<C-a>', '<Esc>ggVG', { desc = 'Select all' })
-map('n', '<C-a>', 'ggVG', { desc = 'Select all' })
 -- Alt+Up/Down move a line; Shift+Alt+Down copies it (VS Code exact behaviour)
 map('n', '<M-Up>', '<Cmd>move .-2<CR>==', { desc = 'Move line up', silent = true })
 map('n', '<M-Down>', '<Cmd>move .+1<CR>==', { desc = 'Move line down', silent = true })
@@ -62,7 +61,7 @@ map('n', '<C-->', '<Cmd>resize -2<CR>', { desc = 'Shrink group', silent = true }
 
 -- Plugin-owned bindings live next to their plugin spec:
 --   Ctrl+P / Ctrl+Shift+P / Ctrl+Shift+F  -> lua/plugins/finder.lua
---   Ctrl+B / Ctrl+Shift+E                 -> lua/plugins/explorer.lua
+--   Space e / Ctrl+Shift+E                -> lua/plugins/explorer.lua
 --   Ctrl+`                                -> lua/plugins/terminal.lua
 --   F5 F9 F10 F11 / Ctrl+Shift+D          -> lua/plugins/dap.lua
 --   F12 Shift+F12 F2 Ctrl+. Ctrl+Shift+M  -> lua/plugins/lsp.lua

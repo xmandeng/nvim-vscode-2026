@@ -112,7 +112,7 @@ nvim +checkhealth
 ```
 
 Then open a Python file and confirm: `:LspInfo` shows **basedpyright** and **ruff**,
-<kbd>Ctrl</kbd>+<kbd>B</kbd> opens the tree, <kbd>F9</kbd> then <kbd>F5</kbd> starts
+<kbd>Space</kbd> `e` opens the tree, <kbd>F9</kbd> then <kbd>F5</kbd> starts
 a debug session.
 
 ## Uninstall

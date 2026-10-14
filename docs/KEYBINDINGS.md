@@ -1,6 +1,7 @@
 # Keybindings
 
-VS Code chords are mapped where a terminal can express them. Every one also has a
+VS Code chords are mapped where a terminal can express them and where they do not
+hide a core Vim key: <kbd>Ctrl</kbd>+<kbd>W</kbd>, <kbd>Ctrl</kbd>+<kbd>A</kbd>, <kbd>Ctrl</kbd>+<kbd>Z</kbd>, <kbd>Ctrl</kbd>+<kbd>Y</kbd>, <kbd>Ctrl</kbd>+<kbd>N</kbd>, <kbd>Ctrl</kbd>+<kbd>B</kbd>, <kbd>Ctrl</kbd>+<kbd>T</kbd>, `gi` and `gr` keep their Vim meaning. Every one also has a
 `<leader>` equivalent (leader is <kbd>Space</kbd>) that works in any terminal.
 Press <kbd>Space</kbd> in normal mode to browse them interactively.
 
@@ -24,23 +25,24 @@ terminal is collapsing it. Use the `<leader>` equivalent instead.
 | Action | Key | Always-works alternative |
 |---|---|---|
 | Save | <kbd>Ctrl</kbd>+<kbd>S</kbd> | `:w` |
-| New file | <kbd>Ctrl</kbd>+<kbd>N</kbd> | `:enew` |
-| Close editor | <kbd>Ctrl</kbd>+<kbd>W</kbd> | `:bd` |
+| New file | — | `:enew` |
+| Close editor | — | `:bd` |
 | Go to File | <kbd>Ctrl</kbd>+<kbd>P</kbd> | <kbd>Space</kbd> `ff` |
 | Command Palette | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> | <kbd>Space</kbd> `fc` |
 | Recent files | — | <kbd>Space</kbd> `fr` |
 | Open editors | — | <kbd>Space</kbd> `fb` |
 
-Files auto-save 500 ms after you stop typing, matching your `files.autoSave`
-settings — including `autoSaveWhenNoErrors` (a buffer with error diagnostics is
-not saved) and `autoSaveWorkspaceFilesOnly` (only files under the cwd).
+There is no auto-save: a file is written when you save it. Saving formats the
+file and sorts its imports, but does not apply ruff's fixes, so an import you have
+just added is never removed before you use it. Apply a fix with
+<kbd>Space</kbd> `ca` on the flagged line.
 
 ## Edit
 
 | Action | Key |
 |---|---|
-| Undo / Redo | <kbd>Ctrl</kbd>+<kbd>Z</kbd> / <kbd>Ctrl</kbd>+<kbd>Y</kbd> |
-| Select all | <kbd>Ctrl</kbd>+<kbd>A</kbd> |
+| Undo / Redo | `u` / <kbd>Ctrl</kbd>+<kbd>R</kbd> |
+| Select all | `ggVG` |
 | Toggle line comment | <kbd>Ctrl</kbd>+<kbd>/</kbd> |
 | Toggle block comment | <kbd>Shift</kbd>+<kbd>Alt</kbd>+<kbd>A</kbd> |
 | Move line up / down | <kbd>Alt</kbd>+<kbd>↑</kbd> / <kbd>Alt</kbd>+<kbd>↓</kbd> |
@@ -60,11 +62,11 @@ if you want it.
 | Action | Key |
 |---|---|
 | Go to Definition | <kbd>F12</kbd> or `gd` |
-| Go to References | <kbd>Shift</kbd>+<kbd>F12</kbd> or `gr` |
-| Go to Implementation | `gi` |
-| Go to Type Definition | `gy` |
-| Go to Symbol (file) | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> |
-| Go to Symbol (workspace) | <kbd>Ctrl</kbd>+<kbd>T</kbd> |
+| Go to References | <kbd>Shift</kbd>+<kbd>F12</kbd> or `grr` |
+| Go to Implementation | `gri` |
+| Go to Type Definition | `gy` or `grt` |
+| Go to Symbol (file) | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>O</kbd> or `gO` |
+| Go to Symbol (workspace) | <kbd>Space</kbd> `fS` |
 | Search across files | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>F</kbd> |
 | Next / previous editor | <kbd>Alt</kbd>+<kbd>→</kbd> / <kbd>Alt</kbd>+<kbd>←</kbd> |
 | Go to editor *n* | <kbd>Alt</kbd>+<kbd>1</kbd>…<kbd>9</kbd> |
@@ -76,8 +78,8 @@ if you want it.
 | Action | Key |
 |---|---|
 | Show hover | <kbd>K</kbd> |
-| Signature help | <kbd>Ctrl</kbd>+<kbd>K</kbd> |
-| Rename symbol | <kbd>F2</kbd> |
+| Signature help | <kbd>Ctrl</kbd>+<kbd>K</kbd> (insert mode) |
+| Rename symbol | <kbd>F2</kbd> or `grn` |
 | Quick fix / code action | <kbd>Ctrl</kbd>+<kbd>.</kbd> or <kbd>Space</kbd> `ca` |
 | Next / previous problem | <kbd>F8</kbd> / <kbd>Shift</kbd>+<kbd>F8</kbd> |
 | Problems panel | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>M</kbd> |
@@ -87,7 +89,7 @@ if you want it.
 
 | Action | Key |
 |---|---|
-| Toggle Explorer | <kbd>Ctrl</kbd>+<kbd>B</kbd> |
+| Toggle Explorer | <kbd>Space</kbd> `e` |
 | Focus Explorer / reveal file | <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>E</kbd> |
 | Integrated terminal | <kbd>Ctrl</kbd>+<kbd>`</kbd> |
 | Source control | <kbd>Space</kbd> `ge` |
