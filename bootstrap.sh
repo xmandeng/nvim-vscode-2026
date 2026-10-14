@@ -82,32 +82,29 @@ if [[ ! -e "$TARGET" ]]; then
 fi
 
 # ── plugins, parsers, language servers ──────────────────────────────────────
+FAILED=0
 if (( INSTALL_DEPS )); then
-  info "Installing plugins (this takes a minute on first run)..."
-  NVIM_APPNAME="$APPNAME" nvim --headless "+Lazy! sync" +qa 2>&1 | tail -3 || true
+  # Plugins go to the commits in lazy-lock.json, never to the latest. The first
+  # start clones lazy.nvim from its stable branch and records that commit in the
+  # lock, so the lock is put back before `restore` pins every plugin to it.
+  LOCK="$TARGET/lazy-lock.json"
+  LOCK_COPY="$(mktemp)"
+  cp "$LOCK" "$LOCK_COPY"
+  info "Installing plugins at the versions in lazy-lock.json (a minute on first run)..."
+  NVIM_APPNAME="$APPNAME" nvim --headless +qa 2>&1 | tail -3 || true
+  cp "$LOCK_COPY" "$LOCK"
+  NVIM_APPNAME="$APPNAME" nvim --headless "+Lazy! restore" +qa 2>&1 | tail -3 || true
+  if ! cmp -s "$LOCK" "$LOCK_COPY"; then
+    warn "lazy-lock.json changed during install; some plugins are not at the locked commit."
+    FAILED=1
+  fi
+  rm -f "$LOCK_COPY"
 
   info "Installing language servers and the debugger..."
-  NVIM_APPNAME="$APPNAME" nvim --headless -c '
-    lua << EOF
-    require("lazy").load({ plugins = { "mason.nvim", "mason-lspconfig.nvim" } })
-    local registry = require("mason-registry")
-    local want = { "basedpyright", "ruff", "lua-language-server", "debugpy" }
-    local pending = 0
-    registry.refresh(function()
-      for _, name in ipairs(want) do
-        local ok, pkg = pcall(registry.get_package, name)
-        if ok and not pkg:is_installed() then
-          pending = pending + 1
-          pkg:once("install:success", function() pending = pending - 1 end)
-          pkg:once("install:failed", function()
-            print("FAILED: " .. name); pending = pending - 1
-          end)
-          pkg:install()
-        end
-      end
-    end)
-    vim.wait(600000, function() return pending == 0 end, 500)
-EOF' +qa 2>&1 | tail -3 || true
+  if ! NVIM_APPNAME="$APPNAME" nvim --headless -c "luafile $REPO_DIR/tools/install_servers.lua"; then
+    warn "language server install failed -- run :Mason to see why."
+    FAILED=1
+  fi
 
   info "Compiling treesitter parsers..."
   NVIM_APPNAME="$APPNAME" nvim --headless \
@@ -117,9 +114,12 @@ EOF' +qa 2>&1 | tail -3 || true
 fi
 
 # ── done ────────────────────────────────────────────────────────────────────
+if (( FAILED )); then
+  warn "Installation finished with errors; see the warnings above."
+else
+  info "Installation complete."
+fi
 cat <<EOF
-
-$(info "Installation complete.")
 
   Launch:        $([[ "$APPNAME" == "nvim" ]] && echo "nvim" || echo "NVIM_APPNAME=$APPNAME nvim")
   Health check:  :checkhealth
@@ -129,3 +129,5 @@ $(info "Installation complete.")
   A Nerd Font is required for icons: https://www.nerdfonts.com
 
 EOF
+
+(( FAILED == 0 ))
